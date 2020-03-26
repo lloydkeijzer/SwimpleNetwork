@@ -14,18 +14,23 @@ public final class URLRequestAuthenticator: RequestInterceptor {
     
     /// Store the access token preferable in a Keychain wrapper
     public var accessToken: String
+    public var isBearer: Bool
     
     public var refreshTokenDataRequest: DataRequest?
     
     private init() {
         accessToken = ""
+        isBearer = true
     }
     
     public func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
         var urlRequest = urlRequest
 
         /// Set the Authorization header value using the access token.
-        urlRequest.setValue("Bearer " + accessToken, forHTTPHeaderField: "Authorization")
+        urlRequest.setValue(isBearer
+            ? "Bearer " + accessToken
+            : accessToken,
+        forHTTPHeaderField: "Authorization")
 
         completion(.success(urlRequest))
     }
